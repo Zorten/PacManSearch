@@ -99,9 +99,6 @@ def depthFirstSearch(problem):
     
     while not frontier.isEmpty():
         path, moves = frontier.pop()
-        # print "CURR", str(curr)
-        # path.append(curr)
-        # print "path", str(path)
         if problem.isGoalState(path[-1]):
             return moves
         
@@ -125,9 +122,6 @@ def breadthFirstSearch(problem):
     
     while not frontier.isEmpty():
         path, moves = frontier.pop()
-        # print "CURR", str(curr)
-        # path.append(curr)
-        # print "path", str(path)
         if problem.isGoalState(path[-1]):
             return moves
 
