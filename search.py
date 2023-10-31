@@ -86,16 +86,55 @@ def depthFirstSearch(problem):
     print "Start:", problem.getStartState()
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
-    "*** YOUR CODE HERE ***"
     
+    start_state = problem.getStartState()
     
+    if problem.isGoalState(start_state):
+        return [start_state]
     
-    util.raiseNotDefined()
+    frontier = util.Stack()
+    
+    for (state, move, cost) in problem.getSuccessors(start_state):
+        frontier.push(([start_state, state], [move])) ## Path, actions, curr_state
+    
+    while not frontier.isEmpty():
+        path, moves = frontier.pop()
+        # print "CURR", str(curr)
+        # path.append(curr)
+        # print "path", str(path)
+        if problem.isGoalState(path[-1]):
+            return moves
+        
+        for (state, move, cost) in problem.getSuccessors(path[-1]):
+            if state not in path:
+                frontier.push((path + [state], moves+[move]))       
+    raise ValueError("There is no solution")
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    start_state = problem.getStartState()
+    
+    if problem.isGoalState(start_state):
+        return []
+    
+    frontier = util.Queue()
+    
+    for (state, move, cost) in problem.getSuccessors(start_state):
+        frontier.push(([start_state, state], [move])) ## Path, actions, curr_state
+    
+    while not frontier.isEmpty():
+        path, moves = frontier.pop()
+        # print "CURR", str(curr)
+        # path.append(curr)
+        # print "path", str(path)
+        if problem.isGoalState(path[-1]):
+            return moves
+
+        for (state, move, cost) in problem.getSuccessors(path[-1]):
+            if state not in path:
+                frontier.push((path + [state], moves+[move]))       
+    raise ValueError("There is no solution")
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
