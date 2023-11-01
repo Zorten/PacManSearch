@@ -82,43 +82,67 @@ def depthFirstSearch(problem):
     To get started, you might want to try some of these simple commands to
     understand the search problem that is being passed in:
     """
-
-    print "Start:", problem.getStartState()
-    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
     
-    start_state = problem.getStartState()
-    
-    if problem.isGoalState(start_state):
-        return [start_state]
-    
-    frontier = util.Stack()
-    
-    for (state, move, cost) in problem.getSuccessors(start_state):
-        frontier.push(([start_state, state], [move])) ## Path, actions, curr_state
-    
-    while not frontier.isEmpty():
-        path, moves = frontier.pop()
-        if problem.isGoalState(path[-1]):
-            return moves
-        
-        for (state, move, cost) in problem.getSuccessors(path[-1]):
-            if state not in path:
-                frontier.push((path + [state], moves+[move]))       
-    raise ValueError("There is no solution")
-
-def breadthFirstSearch(problem):
-    """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
     start_state = problem.getStartState()
     
     if problem.isGoalState(start_state):
         return []
     
+    frontier = util.Stack()
+    visited = set()
+    
+    frontier.push(([start_state], [])) ## Path, actions
+    
+    while not frontier.isEmpty():
+        path, moves = frontier.pop()
+        visited.add(path[-1])
+        if problem.isGoalState(path[-1]):
+            return moves
+        
+        for (state, move, cost) in problem.getSuccessors(path[-1]):
+            if state not in visited:
+                frontier.push((path + [state], moves+[move]))       
+    raise ValueError("There is no solution")
+
+def breadthFirstSearch(problem):
+    """Search the shallowest nodes in the search tree first."""
+    start_state = problem.getStartState()
+    visited = set()
+    
+    if problem.isGoalState(start_state):
+        return []
+    
     frontier = util.Queue()
+    frontier_states = set()
+    
+    frontier.push(([start_state], [])) # Path, actions
+    
+    while not frontier.isEmpty():
+        path, moves = frontier.pop()
+        visited.add(path[-1])
+        if path[-1] in frontier_states:
+            frontier_states.remove(path[-1])
+        if problem.isGoalState(path[-1]):
+            return moves
+
+        for (state, move, cost) in problem.getSuccessors(path[-1]):
+            if state not in visited and state not in frontier_states:
+                frontier_states.add(state)
+                frontier.push((path + [state], moves+[move]))  
+    raise ValueError("There is no solution")
+
+def uniformCostSearch(problem):
+    """Search the node of least total cost first."""
+    start_state = problem.getStartState()
+    
+    if problem.isGoalState(start_state):
+        return []
+    
+    frontier = util.PriorityQueue()
     
     for (state, move, cost) in problem.getSuccessors(start_state):
-        frontier.push(([start_state, state], [move])) ## Path, actions, curr_state
+        # Note the following state is included in the path, so the cost is just the cost of the path
+        frontier.push(([start_state, state], [move]), problem.getCostOfActions([move])) ## Path, actions
     
     while not frontier.isEmpty():
         path, moves = frontier.pop()
@@ -127,13 +151,8 @@ def breadthFirstSearch(problem):
 
         for (state, move, cost) in problem.getSuccessors(path[-1]):
             if state not in path:
-                frontier.push((path + [state], moves+[move]))       
+                frontier.push((path + [state], moves+[move]), problem.getCostOfActions(moves+[move]))       
     raise ValueError("There is no solution")
-
-def uniformCostSearch(problem):
-    """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
     """
