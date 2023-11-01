@@ -139,19 +139,28 @@ def uniformCostSearch(problem):
         return []
     
     frontier = util.PriorityQueue()
+    # frontier_states = set()
+    visited = set()
     
-    for (state, move, cost) in problem.getSuccessors(start_state):
-        # Note the following state is included in the path, so the cost is just the cost of the path
-        frontier.push(([start_state, state], [move]), problem.getCostOfActions([move])) ## Path, actions
+    frontier.push(([start_state,], []), 0) ## Path, actions
     
     while not frontier.isEmpty():
         path, moves = frontier.pop()
+        
+        if path[-1] in visited:
+            # This happens if it was already visted with a lower cost
+            # In theory, you caould be checking the queue every time you add
+            # but that's a lot of work and this is easy.
+            continue
+        
+        visited.add(path[-1])
+            
         if problem.isGoalState(path[-1]):
             return moves
 
         for (state, move, cost) in problem.getSuccessors(path[-1]):
-            if state not in path:
-                frontier.push((path + [state], moves+[move]), problem.getCostOfActions(moves+[move]))       
+            if state not in visited :
+                frontier.push((path+[state], moves+[move]), problem.getCostOfActions(moves) + cost)       
     raise ValueError("There is no solution")
 
 def nullHeuristic(state, problem=None):
