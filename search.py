@@ -246,6 +246,8 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         #Get children of current state, and for each one, if it hasn't been visited already, add to the priority queue 
         for (state, move, cost) in problem.getSuccessors(path[-1]):
             if state not in visited :
+                #calculate cost of expanding the node (costF) by adding cost of path to the node (costG) 
+                # and the calculated cost to goal from the heuristic (costH)
                 costG = problem.getCostOfActions(moves) + cost
                 costH = heuristic(state, problem)
                 costF = costG + costH
