@@ -4,13 +4,15 @@
 
 ## Question 1: Depth First Search
 
-The Pacman board will show an overlay of the states explored, and the order in which they were explored (brighter red means earlier exploration). Is the exploration order what you would have expected? Does Pacman actually go to all the explored squares on his way to the goal?
+**The Pacman board will show an overlay of the states explored, and the order in which they were explored (brighter red means earlier exploration). Is the exploration order what you would have expected? Does Pacman actually go to all the explored squares on his way to the goal?**
+
+**A:** Yes, the order is what we expected because it expands to states that lead to a dead-end. Since depth-first search continues searching down a path until it can’t anymore, the exploration order occurs as expected. However, Pacman does not go to all the explored squares. This is because Pacman takes the shortest path to the goal state (food) and avoids taking a path that leads to a dead-end.
 
 **Screenshots:**
 
 Q1.1:
 
-![Q1.1](https://github.com/Zorten/PacManSearch/blob/main/images/Q1.1.png)
+<img src="https://github.com/Zorten/PacManSearch/blob/main/images/Q1.1.png" width="400">
 
 Q1.2:
 
@@ -64,5 +66,12 @@ Q3 Autograder
 
 **Screenshots:**
 
----
+Q4 Autograder
+
+![Q4.1](https://github.com/Zorten/PacManSearch/blob/main/images/Q4.1.png)
+
+
+Q4 Autograder
+
+![Q4.autograder](https://github.com/Zorten/PacManSearch/blob/main/images/Q4.Autograder.png)
 
