@@ -28,13 +28,37 @@ Autograder Q1:
 
 **Screenshots:**
 
----
+Q2.1
+
+![Q2.1](https://github.com/Zorten/PacManSearch/blob/main/images/Q2.1.png)
+
+Q2.2
+
+![Q2.2](https://github.com/Zorten/PacManSearch/blob/main/images/Q2.2.png)
+
+Q2 Autograder
+
+![Q2.autograder](https://github.com/Zorten/PacManSearch/blob/main/images/Q2.autograder.png)
 
 ## Question 3: Uniform Cost Search
 
 **Screenshots:**
 
----
+Q3.1
+
+![Q3.1](https://github.com/Zorten/PacManSearch/blob/main/images/Q3.1.png)
+
+Q3.2
+
+![Q3.2](https://github.com/Zorten/PacManSearch/blob/main/images/Q3.2.png)
+
+Q3.3
+
+![Q3.3](https://github.com/Zorten/PacManSearch/blob/main/images/Q3.3.png)
+
+Q3 Autograder
+
+![Q3.autograder](https://github.com/Zorten/PacManSearch/blob/main/images/Q3.autograder.png)
 
 ## Question 4: A* Search
 
