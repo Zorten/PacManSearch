@@ -64,5 +64,12 @@ Q3 Autograder
 
 **Screenshots:**
 
----
+Q4 Autograder
+
+![Q4.1](https://github.com/Zorten/PacManSearch/blob/main/images/Q4.1.png)
+
+
+Q4 Autograder
+
+![Q4.autograder](https://github.com/Zorten/PacManSearch/blob/main/images/Q4.Autograder.png)
 
