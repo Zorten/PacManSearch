@@ -4,7 +4,9 @@
 
 ## Question 1: Depth First Search
 
-The Pacman board will show an overlay of the states explored, and the order in which they were explored (brighter red means earlier exploration). Is the exploration order what you would have expected? Does Pacman actually go to all the explored squares on his way to the goal?
+**The Pacman board will show an overlay of the states explored, and the order in which they were explored (brighter red means earlier exploration). Is the exploration order what you would have expected? Does Pacman actually go to all the explored squares on his way to the goal?**
+
+**A:** Yes, the order is what we expected because it expands to states that lead to a dead-end. Since depth-first search continues searching down a path until it can’t anymore, the exploration order occurs as expected. However, Pacman does not go to all the explored squares. This is because Pacman takes the shortest path to the goal state (food) and avoids taking a path that leads to a dead-end.
 
 **Screenshots:**
 
