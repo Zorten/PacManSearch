@@ -12,7 +12,7 @@
 
 Q1.1:
 
-![Q1.1](https://github.com/Zorten/PacManSearch/blob/main/images/Q1.1.png)
+<img src="https://github.com/Zorten/PacManSearch/blob/main/images/Q1.1.png" width="400">
 
 Q1.2:
 
