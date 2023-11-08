@@ -84,8 +84,6 @@ def generalSearch(problem, queue_fn):
     visited = set()
     #initialize queue to keep track of nodes being explored 
     frontier = queue_fn()
-    #initialize set to keep track of states in queue to prevent exploring twice
-    # frontier_states = set()
     
     #start by exploring initial state
     frontier.push(([start_state], [])) #appends a tuple of the form: ([Path], [moves]) to the queue
@@ -100,18 +98,15 @@ def generalSearch(problem, queue_fn):
         
         
         visited.add(path[-1])
-        #Check if the last node visited is in the set, if so remove it
-        # if path[-1] in frontier_states:
-            # frontier_states.remove(path[-1])
+        
         #Check if the node is the goal state, if so return list of moves to this node         
         if problem.isGoalState(path[-1]):
             return moves
         
         #Expand the last node in the path, and for each of the children, add to frontier_states set
-        #and frontier queue, if they aren't part of it already
+        #and frontier queue
         for (state, move, cost) in problem.getSuccessors(path[-1]):
-            if state not in visited: # and state not in frontier_states:
-                #frontier_states.add(state)
+            if state not in visited:
                 frontier.push((path + [state], moves+[move]))  
     raise ValueError("There is no solution")
 
