@@ -72,55 +72,7 @@ def tinyMazeSearch(problem):
     w = Directions.WEST
     return  [s, s, w, s, w, w, s, w]
 
-def depthFirstSearch(problem):
-    """
-    Search the deepest nodes in the search tree first.
-
-    Your search algorithm needs to return a list of actions that reaches the
-    goal. Make sure to implement a graph search algorithm.
-
-    To get started, you might want to try some of these simple commands to
-    understand the search problem that is being passed in:
-    """
-    
-    # Get the initial state and check if it is goal
-    #All states are in the form of coordinates (x, y), with (0,0) being the lower left corner of gameboard
-    start_state = problem.getStartState()
-    
-    if problem.isGoalState(start_state):
-        return []
-    
-    #initialize stack to keep track of nodes at frontier being explored
-    frontier = util.Stack()
-    #initialize set to keep track of nodes already visited
-    visited = set()
-    
-    #start with exploring initial state 
-    frontier.push(([start_state], [])) ## appends a tuple of the form: ([Path], [moves]) to the stack
-    
-    #Loop while there are nodes to be explored in the frontier
-    while not frontier.isEmpty():
-        #Get the node at the top of the frontier stack 
-        path, moves = frontier.pop()
-        #path contains a list of nodes visited up to this point that make up our path to the goal
-        # Access the last node in this list by using -1 index, and add to visited set 
-        visited.add(path[-1])
-        #Check if last node in path is the goal, if so return the list of moves in this path
-        if problem.isGoalState(path[-1]):
-            return moves
-        
-        #If not at goal state, expand successors of the last node in the path to the goal
-        #problem.getSuccessors(coordinate) returns a list of successors in the form: (successor_state, move_to_get_there, cost_of_that_move)
-        for (state, move, cost) in problem.getSuccessors(path[-1]):
-            #If the node has not been added to the visited set, append it to the frontier stack, with the updated path and moves
-            if state not in visited:
-                frontier.push((path + [state], moves+[move]))       
-    #If stack is empty, it means no solution was found as the goal state was not found in any of the explorable nodes
-    raise ValueError("There is no solution")
-
-def breadthFirstSearch(problem):
-    """Search the shallowest nodes in the search tree first."""
-    
+def generalSearch(problem, queue_fn):
     # Get the initial state and check if it is goal
     #All states are in the form of coordinates (x, y), with (0,0) being the lower left corner of gameboard
     start_state = problem.getStartState()
@@ -131,7 +83,7 @@ def breadthFirstSearch(problem):
     #initialize set to keep track of nodes already visited
     visited = set()
     #initialize queue to keep track of nodes being explored 
-    frontier = util.Queue()
+    frontier = queue_fn()
     #initialize set to keep track of states in queue to prevent exploring twice
     # frontier_states = set()
     
@@ -143,11 +95,15 @@ def breadthFirstSearch(problem):
         #Get the node at the front of the queue
         path, moves = frontier.pop()
         #Append to the visited set the last node on the path up until this point
+        if path[-1] in visited:
+            continue    
+        
+        
         visited.add(path[-1])
         #Check if the last node visited is in the set, if so remove it
         # if path[-1] in frontier_states:
             # frontier_states.remove(path[-1])
-        #Check if the node is the goal state, if so return list of moves to this node 
+        #Check if the node is the goal state, if so return list of moves to this node         
         if problem.isGoalState(path[-1]):
             return moves
         
@@ -159,6 +115,24 @@ def breadthFirstSearch(problem):
                 frontier.push((path + [state], moves+[move]))  
     raise ValueError("There is no solution")
 
+
+
+def depthFirstSearch(problem):
+    """
+    Search the deepest nodes in the search tree first.
+
+    Your search algorithm needs to return a list of actions that reaches the
+    goal. Make sure to implement a graph search algorithm.
+
+    To get started, you might want to try some of these simple commands to
+    understand the search problem that is being passed in:
+    """
+    return generalSearch(problem, util.Stack)
+
+def breadthFirstSearch(problem):
+    """Search the shallowest nodes in the search tree first."""
+    return generalSearch(problem, util.Queue)
+    
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     
