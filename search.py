@@ -135,45 +135,7 @@ def breadthFirstSearch(problem):
     
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    
-    # Get the initial state and check if it is goal
-    #All states are in the form of coordinates (x, y), with (0,0) being the lower left corner of gameboard
-    start_state = problem.getStartState()
-    
-    if problem.isGoalState(start_state):
-        return []
-    
-    #initialize priority queue to keep track of nodes being explored 
-    frontier = util.PriorityQueue()
-    #initialize set to keep track of nodes already visited
-    visited = set()
-    
-    #start by exploring initial state
-    frontier.push(([start_state], []), 0) #appends a tuple of the form: ([Path], [moves], cost to this state) to the priority queue
-    
-    #loop while priority queue is not empty, so there are still nodes to be visited
-    while not frontier.isEmpty():
-        #get the node with the highest priority 
-        path, moves = frontier.pop()
-        
-        if path[-1] in visited:
-            # This happens if it was already visted with a lower cost
-            # In theory, you could be checking the queue every time you add
-            # but that's a lot of work and this is easy.
-            continue
-        
-        #add the current node to the visited set 
-        visited.add(path[-1])
-            
-        #check if goal reached, if so return list of moves to get there
-        if problem.isGoalState(path[-1]):
-            return moves
-
-        #Get children of current state, and for each one, if it hasn't been visited already, add to the priority queue 
-        for (state, move, cost) in problem.getSuccessors(path[-1]):
-            if state not in visited :
-                frontier.push((path+[state], moves+[move]), problem.getCostOfActions(moves) + cost)       
-    raise ValueError("There is no solution")
+    return aStarSearch(problem, nullHeuristic)
 
 def nullHeuristic(state, problem=None):
     """
