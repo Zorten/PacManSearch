@@ -280,6 +280,7 @@ class CornersProblem(search.SearchProblem):
         self.walls = startingGameState.getWalls()
         self.startingPosition = startingGameState.getPacmanPosition()
         top, right = self.walls.height-2, self.walls.width-2
+        #Tuple of tuples
         self.corners = ((1,1), (1,top), (right, 1), (right, top))
         for corner in self.corners:
             if not startingGameState.hasFood(*corner):
@@ -294,15 +295,16 @@ class CornersProblem(search.SearchProblem):
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        #State is a tuple (Position, (tuple of corners visited))
+        return (self.startingPosition, ())
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        #Check to see if corners visited by current state is equal to all corners
+        isGoal = (state[1] == self.corners)
+        return isGoal
 
     def getSuccessors(self, state):
         """
@@ -324,7 +326,28 @@ class CornersProblem(search.SearchProblem):
             #   nextx, nexty = int(x + dx), int(y + dy)
             #   hitsWall = self.walls[nextx][nexty]
 
-            "*** YOUR CODE HERE ***"
+            #Get current position and calculate next coordinates
+            x,y = state[0]
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            hitsWall = self.walls[nextx][nexty]
+            
+            #Only expand successors if no walls are present after move
+            if (not hitsWall):
+                #New coordinate after move action
+                newState = (nextx, nexty)
+                #Current number of corners that have been visited
+                cornersVisited = list(state[1])
+                
+                #Check if node expanded is a corner, if so add it to list
+                if (newState in self.corners and newState not in cornersVisited):
+                    cornersVisited.append(newState)
+                    
+                #Update list of successors with a new entry of form: (1, 2, 3)
+                # 1: successor state, as a tuple of (position coordinate, corners visited)
+                # 2: action to get to successor
+                # 3: cost to perform action
+                successors.append(((newState, tuple(cornersVisited)), action, 1))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
