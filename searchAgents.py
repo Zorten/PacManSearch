@@ -365,6 +365,33 @@ class CornersProblem(search.SearchProblem):
             if self.walls[x][y]: return 999999
         return len(actions)
 
+def minimize_distance(curr_pos, corners):
+    distances = [util.manhattanDistance(curr_pos, corner) for corner in corners]
+    min_index = 0
+    min_value = distances[0]
+    for idx, distance in enumerate(distances):
+        if distance < min_value:
+            min_value = distance
+            min_index = idx
+    remaining_corners = corners[:min_index] + corners[min_index+1:]    
+        
+    return corners[min_index], distances[min_index], remaining_corners
+
+
+def tylers_idea(state,problem):
+    total_distance = 0
+    remaining_corners = [corner for corner in problem.corners if not corner in state[1]]
+    if len(remaining_corners) == 0:
+        return 0
+    # Optimal initial move without walls is to go to the closers corner
+    closest_corner, distance_to_closest_corner, remaining_corners = minimize_distance(state[0], remaining_corners)
+    total_distance += distance_to_closest_corner
+    # Now, we need to make it to all of the other points, so do that again.
+    while len(remaining_corners) > 0:
+        closest_corner, distance_to_closest_corner, remaining_corners = minimize_distance(closest_corner, remaining_corners)
+        total_distance += distance_to_closest_corner
+    return total_distance
+
 
 def cornersHeuristic(state, problem):
     """
@@ -383,7 +410,7 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    return tylers_idea(state, problem)
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
