@@ -377,7 +377,7 @@ def minimize_distance(curr_pos, corners):
 
 def tylers_idea(state,problem):
     total_distance = 0
-    remaining_corners = [corner for corner in problem.corners if not corner in state[1]]
+    remaining_corners = state[1]
     if len(remaining_corners) == 0:
         return 0
     # Optimal initial move without walls is to go to the closers corner
