@@ -362,14 +362,20 @@ class CornersProblem(search.SearchProblem):
             if self.walls[x][y]: return 999999
         return len(actions)
 
+#Func to calculate minimum distance from provided position to a corner
+#params: current position, corners left to visit
+#returns: closest corner from provided position, distance to that closest corner, and the remaining corners left to visit
 def minimize_distance(curr_pos, corners):
+    #creates a list that stores the manhattan distances from current position to each of the corner 
     distances = [util.manhattanDistance(curr_pos, corner) for corner in corners]
     min_index = 0
     min_value = distances[0]
+    #Go through all the distances calculated and find minimum one
     for idx, distance in enumerate(distances):
         if distance < min_value:
             min_value = distance
             min_index = idx
+    #Remove closest corner from remaining_corners, since it'll be visited next.
     remaining_corners = corners[:min_index] + corners[min_index+1:]    
         
     return corners[min_index], distances[min_index], remaining_corners
@@ -387,20 +393,27 @@ def cornersHeuristic(state, problem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
-    corners = problem.corners # These are the corner coordinates
+    corners = problem.corners # These are the coordinates for all the corners 
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
+    #h(n) cost that wil be returned by heuristic, signifying cost to goal
     total_distance = 0
+    #list to keep track of corners left to visit
     remaining_corners = state[1]
+    #if all corners reached, return 0 since goal was reached
     if len(remaining_corners) == 0:
         return 0
-    # Optimal initial move without walls is to go to the closers corner
+    # Optimal initial move without walls is to go to the closest corner
+    #Call minimal distance function to get following variables,passing in PacMan's current position provided, and the remaining corners
     closest_corner, distance_to_closest_corner, remaining_corners = minimize_distance(state[0], remaining_corners)
+    #Update total distance for heuristic
     total_distance += distance_to_closest_corner
     # Now, we need to make it to all of the other points, so do that again.
     while len(remaining_corners) > 0:
+        #Call minimal distance func to get following vars, passing in the position of the last closest corner that was found, and the remaining corners
         closest_corner, distance_to_closest_corner, remaining_corners = minimize_distance(closest_corner, remaining_corners)
+        #update total distance calculated by heursitic
         total_distance += distance_to_closest_corner
     return total_distance
 
