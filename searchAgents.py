@@ -295,16 +295,14 @@ class CornersProblem(search.SearchProblem):
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        #State is a tuple (Position, (tuple of corners visited))
-        return (self.startingPosition, ())
+        return (self.startingPosition, set(self.corners))
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         #Check to see if corners visited by current state is equal to all corners
-        isGoal = (state[1] == self.corners)
-        return isGoal
+        return len(state[1]) == 0
 
     def getSuccessors(self, state):
         """
@@ -337,17 +335,16 @@ class CornersProblem(search.SearchProblem):
                 #New coordinate after move action
                 newState = (nextx, nexty)
                 #Current number of corners that have been visited
-                cornersVisited = list(state[1])
+                remainingCorners = list(state[1])
                 
                 #Check if node expanded is a corner, if so add it to list
-                if (newState in self.corners and newState not in cornersVisited):
-                    cornersVisited.append(newState)
+                remainingCorners = [corner for corner in remainingCorners if corner != newState]
                     
                 #Update list of successors with a new entry of form: (1, 2, 3)
-                # 1: successor state, as a tuple of (position coordinate, corners visited)
+                # 1: successor state, as a tuple of (position coordinate, corners left to visit)
                 # 2: action to get to successor
                 # 3: cost to perform action
-                successors.append(((newState, tuple(cornersVisited)), action, 1))
+                successors.append(((newState, tuple(remainingCorners)), action, 1))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
