@@ -509,11 +509,13 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
+    ##Using essentially the same heuristic as for the CornersProblem
+    
      #h(n) cost that wil be returned by heuristic, signifying cost to goal
     total_distance = 0
-    #list to keep track of corners left to visit
+    #list to keep track of dots left to visit
     remaining_dots = state[1].asList()
-    #if all corners reached, return 0 since goal was reached
+    #if all dots reached, return 0 since goal was reached
     if len(remaining_dots) == 0:
         return 0
     # Optimal initial move without walls is to go to the closest dot
@@ -521,7 +523,7 @@ def foodHeuristic(state, problem):
     closest_dot, distance_to_closest_dot, remaining_dots = minimize_distance(state[0], remaining_dots)
     #Update total distance for heuristic
     total_distance += distance_to_closest_dot
-    # Now, we need to make it to all of the other points, so do that again.
+    # Now, we need to make it to all of the other dots, so do that again.
     while len(remaining_dots) > 0:
         #Call minimal distance func to get following vars, passing in the position of the last closest dot that was found, and the remaining dots
         closest_dot, distance_to_closest_dot, remaining_dots = minimize_distance(closest_dot, remaining_dots)
@@ -558,8 +560,8 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
-        
-        actions = []
+        #use BFS to solve problem and return resulting list of actions
+        actions = search.breadthFirstSearch(problem)
         return actions
 
 class AnyFoodSearchProblem(PositionSearchProblem):
@@ -600,7 +602,9 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         # Grids can be accessed via list notation, so to check
         # if there is food at (x,y), just call
 
-        currentFood = self.getFood()
+        ## Basically check if current position is where a food dot is
+        ## if so then the goal has been reached
+        currentFood = self.food
         return(currentFood[x][y])
         
 
