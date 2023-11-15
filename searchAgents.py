@@ -362,12 +362,12 @@ class CornersProblem(search.SearchProblem):
             if self.walls[x][y]: return 999999
         return len(actions)
 
-#Func to calculate minimum distance from provided position to a corner
-#params: current position, corners left to visit
-#returns: closest corner from provided position, distance to that closest corner, and the remaining corners left to visit
-def minimize_distance(curr_pos, corners):
-    #creates a list that stores the manhattan distances from current position to each of the corner 
-    distances = [util.manhattanDistance(curr_pos, corner) for corner in corners]
+#Func to calculate minimum distance from provided position to a list of positions
+#params: current position, positions left to visit
+#returns: closest pos from provided position, distance to that closest pos, and the remaining positions left to visit
+def minimize_distance(curr_pos, positions):
+    #creates a list that stores the manhattan distances from current position to each of the pos 
+    distances = [util.manhattanDistance(curr_pos, pos) for pos in positions]
     min_index = 0
     min_value = distances[0]
     #Go through all the distances calculated and find minimum one
@@ -375,10 +375,10 @@ def minimize_distance(curr_pos, corners):
         if distance < min_value:
             min_value = distance
             min_index = idx
-    #Remove closest corner from remaining_corners, since it'll be visited next.
-    remaining_corners = corners[:min_index] + corners[min_index+1:]    
+    #Remove closest pos from remaining_positions, since it'll be visited next.
+    remaining_positions = positions[:min_index] + positions[min_index+1:]    
         
-    return corners[min_index], distances[min_index], remaining_corners
+    return positions[min_index], distances[min_index], remaining_positions
 
 def cornersHeuristic(state, problem):
     """
@@ -509,7 +509,25 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+     #h(n) cost that wil be returned by heuristic, signifying cost to goal
+    total_distance = 0
+    #list to keep track of corners left to visit
+    remaining_dots = state[1].asList()
+    #if all corners reached, return 0 since goal was reached
+    if len(remaining_dots) == 0:
+        return 0
+    # Optimal initial move without walls is to go to the closest dot
+    #Call minimal distance function to get following variables,passing in PacMan's current position provided, and the remaining dots
+    closest_dot, distance_to_closest_dot, remaining_dots = minimize_distance(state[0], remaining_dots)
+    #Update total distance for heuristic
+    total_distance += distance_to_closest_dot
+    # Now, we need to make it to all of the other points, so do that again.
+    while len(remaining_dots) > 0:
+        #Call minimal distance func to get following vars, passing in the position of the last closest dot that was found, and the remaining dots
+        closest_dot, distance_to_closest_dot, remaining_dots = minimize_distance(closest_dot, remaining_dots)
+        #update total distance calculated by heursitic
+        total_distance += distance_to_closest_dot
+    return total_distance
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -540,7 +558,9 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        
+        actions = []
+        return actions
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -576,7 +596,13 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x,y = state
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        
+        # Grids can be accessed via list notation, so to check
+        # if there is food at (x,y), just call
+
+        currentFood = self.getFood()
+        return(currentFood[x][y])
+        
 
 def mazeDistance(point1, point2, gameState):
     """
