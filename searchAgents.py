@@ -40,6 +40,7 @@ from game import Actions
 import util
 import time
 import search
+import itertools
 
 class GoWestAgent(Agent):
     "An agent that goes West until it can't."
@@ -508,19 +509,35 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    ##Using essentially the same heuristic as for the CornersProblem
+    foodGrid = foodGrid.asList()
     
-     #h(n) cost that wil be returned by heuristic, signifying cost to goal
+    if len(foodGrid) == 0:
+        return 0
+    
+    greedy_distances = [greedy_walk(food, [x for x in foodGrid if x != food]) for food in foodGrid]
+    min_indices = [0]
+    min_value = greedy_distances[0]
+    for idx, distance in enumerate(greedy_distances):
+        if distance < min_value:
+            min_value = distance
+            min_indices = [idx]
+        elif distance == min_value:
+            min_indices.append(idx)
+            
+    # Get closest food with minimum greedy walk length
+    closest_dot, distance_to_closest_dot, _ = minimize_distance(state[0], [foodGrid[i] for i in min_indices])
+    
+    return min_value + distance_to_closest_dot
+
+def greedy_walk(starting_pos, remaining_dots):
     total_distance = 0
     #list to keep track of dots left to visit
-    remaining_dots = state[1].asList()
     #if all dots reached, return 0 since goal was reached
     if len(remaining_dots) == 0:
         return 0
     # Optimal initial move without walls is to go to the closest dot
     #Call minimal distance function to get following variables,passing in PacMan's current position provided, and the remaining dots
-    closest_dot, distance_to_closest_dot, remaining_dots = minimize_distance(state[0], remaining_dots)
+    closest_dot, distance_to_closest_dot, remaining_dots = minimize_distance(starting_pos, remaining_dots)
     #Update total distance for heuristic
     total_distance += distance_to_closest_dot
     # Now, we need to make it to all of the other dots, so do that again.
