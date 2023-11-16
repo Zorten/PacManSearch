@@ -41,6 +41,7 @@ import util
 import time
 import search
 import itertools
+import math
 
 class GoWestAgent(Agent):
     "An agent that goes West until it can't."
@@ -510,42 +511,41 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     foodGrid = foodGrid.asList()
-    
     if len(foodGrid) == 0:
         return 0
-    
-    greedy_distances = [greedy_walk(food, [x for x in foodGrid if x != food]) for food in foodGrid]
-    min_indices = [0]
-    min_value = greedy_distances[0]
-    for idx, distance in enumerate(greedy_distances):
-        if distance < min_value:
-            min_value = distance
-            min_indices = [idx]
-        elif distance == min_value:
-            min_indices.append(idx)
-            
-    # Get closest food with minimum greedy walk length
-    closest_dot, distance_to_closest_dot, _ = minimize_distance(state[0], [foodGrid[i] for i in min_indices])
-    
-    return min_value + distance_to_closest_dot
 
-def greedy_walk(starting_pos, remaining_dots):
+    _, distance_to_closest_dot, _ = minimize_distance(state[0], foodGrid)
+    return MST(position, foodGrid) + distance_to_closest_dot
+
+def MST(starting_pos, remaining_dots):   
+    distances = util.PriorityQueue()
+    
+    # for dot_to in remaining_dots:
+    #     distances.push((starting_pos, dot_to), util.manhattanDistance(starting_pos, dot_to))
+    for idx, dot_from in enumerate(remaining_dots):
+        for dot_to in remaining_dots[idx+1:]:
+            distances.push((dot_from, dot_to), util.manhattanDistance(dot_from, dot_to))
+            
+    all_sets = [set([x]) for x in remaining_dots]
+    
     total_distance = 0
-    #list to keep track of dots left to visit
-    #if all dots reached, return 0 since goal was reached
-    if len(remaining_dots) == 0:
-        return 0
-    # Optimal initial move without walls is to go to the closest dot
-    #Call minimal distance function to get following variables,passing in PacMan's current position provided, and the remaining dots
-    closest_dot, distance_to_closest_dot, remaining_dots = minimize_distance(starting_pos, remaining_dots)
-    #Update total distance for heuristic
-    total_distance += distance_to_closest_dot
-    # Now, we need to make it to all of the other dots, so do that again.
-    while len(remaining_dots) > 0:
-        #Call minimal distance func to get following vars, passing in the position of the last closest dot that was found, and the remaining dots
-        closest_dot, distance_to_closest_dot, remaining_dots = minimize_distance(closest_dot, remaining_dots)
-        #update total distance calculated by heursitic
-        total_distance += distance_to_closest_dot
+    while not distances.isEmpty():
+        (dot_from, dot_to) = distances.pop()
+        # Find a set containing dot_from
+        from_set_idx = -1 
+        for idx, x in enumerate(all_sets):
+            if x is not None and dot_from in x:
+                from_set_idx = idx
+        # Find a set containing dot_to
+        to_set_idx = -1 
+        for idx, x in enumerate(all_sets):
+            if x is not None and dot_to in x:
+                to_set_idx = idx
+        if from_set_idx != to_set_idx:
+            # Merge the two sets
+            all_sets[from_set_idx] = all_sets[from_set_idx].union(all_sets[to_set_idx])
+            all_sets[to_set_idx] = None
+            total_distance += util.manhattanDistance(dot_from, dot_to)
     return total_distance
 
 class ClosestDotSearchAgent(SearchAgent):
